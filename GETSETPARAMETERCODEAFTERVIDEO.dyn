@@ -1,0 +1,289 @@
+{
+  "Uuid": "98b44cca-a823-4ec0-bd65-5c1e89d3c7ce",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "GETSETPARAMETERCODEAFTERVIDEO",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\nclr.AddReference('RevitServices')\r\nfrom Autodesk.Revit.DB import BuiltInCategory as Bic\r\nfrom Autodesk.Revit.DB import FilteredElementCollector as Fec\r\nfrom Autodesk.Revit.DB import Transaction\r\n\r\n#Import Dynamo libraries\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nimport math\r\n# Get the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n\r\n# Collect rooms\r\n#rooms = Fec(doc).OfCategory(Bic.OST_Rooms).WhereElementIsNotElementType().ToElements()\r\nrooms = UnwrapElement(IN[0])\r\n\r\n# Start a transaction\r\n#t = Transaction(doc, 'Transaction 1')\r\n#t.Start()\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n#Loop through room elementID's to GetParameter\r\n#for element in IN[0]:\r\n#    room_occupancy = element.Parameters.LookupParameter('Occupancy')\r\n\r\n# Loop through rooms(Copy code)\r\n\r\n#for room in rooms:\r\n\t\r\n#\troom_parameter = room.Parameters\r\n#\troom_parameter_map = room.ParametersMap\r\n#\troom_area = room.Area\r\n#\troom_occupancy = room.LookupParameter('Occupancy')\r\n#\tnew_occupancy = str(room_area/100)\r\n#\troom_occupancy.Set(new_occupancy)\r\n#\tprint(room_occupancy.AsString())\r\n\t\r\n#t.Commit()\r\ntempList = []\r\nfor room in rooms:\r\n    room_parameter = room.Parameters\r\n    room_parameter_map = room.ParametersMap\r\n    room_area = room.Area\r\n    room_occupancy = room.LookupParameter('Occupancy')\r\n    new_occupancy = str(round(room_area/100))\r\n    \r\n    \r\n    if room_occupancy:\r\n        room.LookupParameter('Occupancy').Set(new_occupancy)\r\n        tempList.append(room.LookupParameter('Occupancy').AsString())\r\n        \r\n        \r\n\r\n# Commit the transaction\r\n#t.Commit()\r\n\r\nOUT = tempList\r\nTransactionManager.Instance.TransactionTaskDone()\r\n",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "fe4cc52a1aa14a68b56856d8f6060545",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "293ef0ad00d74c7cb0ba579aa9c08a8c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9a63e0efb6bc49a8b8ab796d52b59051",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 503,
+      "SelectedString": "OST_Rooms",
+      "Id": "e345fdfb6d094f8ea95daee01f397027",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "030ca44cb0934867a282565413bb75b0",
+          "Name": "Category",
+          "Description": "The selected Category.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All built-in categories."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "Id": "5dad8d4ece83410a8590615ed8c043bd",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "e8262b84da6149c79015d22bb2887795",
+          "Name": "Category",
+          "Description": "The Category",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "240e61dd5cd1440baa3110e2ccfd3f42",
+          "Name": "Elements",
+          "Description": "An element class.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Get all elements of the specified category from the model."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 200.0,
+      "WatchHeight": 200.0,
+      "Id": "e13797ab6a6a4cb5a4c1c4efcc484507",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "51091075e0c9409c81a77634bc912db6",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7d832f1102354f1dabb25b4e1ea77aeb",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 200.0,
+      "WatchHeight": 200.0,
+      "Id": "e5a4b6d04e7c4fefab6452461cae970b",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "555f24e0fe66427795a9d198df682bc3",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "159b247ac4f24240b0f2c19ccf1d80c7",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "9a63e0efb6bc49a8b8ab796d52b59051",
+      "End": "51091075e0c9409c81a77634bc912db6",
+      "Id": "b069b59bea8a4186ad8beca053e295f6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "030ca44cb0934867a282565413bb75b0",
+      "End": "e8262b84da6149c79015d22bb2887795",
+      "Id": "0db09858d7574ef5aa32890dc1e011f9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "240e61dd5cd1440baa3110e2ccfd3f42",
+      "End": "293ef0ad00d74c7cb0ba579aa9c08a8c",
+      "Id": "4c97924cf3544b408e8c950944d3f6df",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "240e61dd5cd1440baa3110e2ccfd3f42",
+      "End": "555f24e0fe66427795a9d198df682bc3",
+      "Id": "57613d6890c94a24ad02256cf9c666a0",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.18",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "6.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.18.1.5096",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "fe4cc52a1aa14a68b56856d8f6060545",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 493.72891982968576,
+        "Y": 199.97931864819697
+      },
+      {
+        "Id": "e345fdfb6d094f8ea95daee01f397027",
+        "Name": "Categories",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": -182.53276227125741,
+        "Y": 204.30000408851959
+      },
+      {
+        "Id": "5dad8d4ece83410a8590615ed8c043bd",
+        "Name": "All Elements of Category",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 139.82075769086276,
+        "Y": 201.56936604223586
+      },
+      {
+        "Id": "e13797ab6a6a4cb5a4c1c4efcc484507",
+        "Name": "Watch",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 748.21808436567221,
+        "Y": 207.49374288321712
+      },
+      {
+        "Id": "e5a4b6d04e7c4fefab6452461cae970b",
+        "Name": "Watch",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 492.88746156160823,
+        "Y": -192.56886171221905
+      }
+    ],
+    "Annotations": [],
+    "X": 1159.9284584914631,
+    "Y": 530.24229759102627,
+    "Zoom": 0.51878276364907572
+  }
+}

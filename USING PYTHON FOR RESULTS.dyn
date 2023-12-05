@@ -1,0 +1,203 @@
+{
+  "Uuid": "3bbbf233-9e9b-4c41-9b0e-8a17bef5abff",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "USING PYTHON FOR RESULTS",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Import Dynamo Revit libraries\r\n\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, BuiltInParameter\r\n\r\n# Import Dynamo Revit DocumentManager\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\n# Get the active Revit document from the current Dynamo Revit model\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Define a category for all elements (Generic Models category)\r\ncategory = BuiltInCategory.OST_Walls\r\n\r\n# Create a filtered element collector to get all instances of the specified category\r\ncollector = FilteredElementCollector(doc).OfCategory(category).WhereElementIsNotElementType()\r\n\r\ninstance_name = []\r\n# Iterate through the instances and print their names\r\nfor instance in collector:\r\n    instance_name_param = instance.get_Parameter(BuiltInParameter.ALL_MODEL_MARK)\r\n    instance_name.append(instance)\r\n       \r\n   ",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "3b2811f8297c4a4d89d78f0d2dbaf05a",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "a53c626629fe4316a40f74e4b0b96738",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "876affca58a443e5814913d66e4ed8fc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 200.0,
+      "WatchHeight": 200.0,
+      "Id": "565c7c8c1b8948c6b7a1a00f47a1fb4b",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "60c0239071bc46c2935c41cdaf255b4c",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c923d72e8e284db1b7db2c55825bac32",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory\r\n\r\n# Import Dynamo Revit DocumentManager\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\n# Get the active Revit document from the current Dynamo Revit model\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Define a category for all elements (Generic Models category)\r\ncategory = BuiltInCategory.OST_Walls\r\n\r\n# Create a filtered element collector to get all instances of the specified category\r\ncollector = FilteredElementCollector(doc).OfCategory(category).WhereElementIsNotElementType()\r\n\r\n# Get the first element in the collector (you can modify this as needed)\r\nfirst_element = collector.FirstElement()\r\n\r\narrayEl =[]\r\n# Print all parameter names and values for the first element\r\nif first_element:\r\n    for param in first_element.Parameters:\r\n        param_name = param.Definition.Name\r\n        param_value = param.AsValueString()\r\n        arrayEl.append(param_value)\r\n        \r\nOUT=arrayEl",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "c030b25508384477a6aa05c8508289aa",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "f7878eaf9433458694d260970cf38d3f",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "968482aceb2b4a378970c5641aa9d9d4",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "968482aceb2b4a378970c5641aa9d9d4",
+      "End": "60c0239071bc46c2935c41cdaf255b4c",
+      "Id": "eb21fa9a3af74563a651e2af94173da1",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.18",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "6.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.18.1.5096",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "3b2811f8297c4a4d89d78f0d2dbaf05a",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 463.00510345211518,
+        "Y": 241.02273891186832
+      },
+      {
+        "Id": "565c7c8c1b8948c6b7a1a00f47a1fb4b",
+        "Name": "Watch",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 798.99767489659246,
+        "Y": 8.51976337896349
+      },
+      {
+        "Id": "c030b25508384477a6aa05c8508289aa",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 462.1272937368409,
+        "Y": 458.22221862576578
+      }
+    ],
+    "Annotations": [],
+    "X": -126.06990559443909,
+    "Y": 128.92513747490386,
+    "Zoom": 0.94308467029363241
+  }
+}
