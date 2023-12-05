@@ -1,0 +1,61 @@
+import clr
+clr.AddReference('RevitAPI')
+clr.AddReference('RevitNodes')
+clr.AddReference('RevitServices')
+from Autodesk.Revit.DB import BuiltInCategory as Bic
+from Autodesk.Revit.DB import FilteredElementCollector as Fec
+from Autodesk.Revit.DB import Transaction
+
+#Import Dynamo libraries
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+import math
+# Get the current Revit document
+doc = DocumentManager.Instance.CurrentDBDocument
+
+
+# Collect rooms
+#rooms = Fec(doc).OfCategory(Bic.OST_Rooms).WhereElementIsNotElementType().ToElements()
+rooms = UnwrapElement(IN[0])
+
+# Start a transaction
+#t = Transaction(doc, 'Transaction 1')
+#t.Start()
+TransactionManager.Instance.EnsureInTransaction(doc)
+#Loop through room elementID's to GetParameter
+#for element in IN[0]:
+#    room_occupancy = element.Parameters.LookupParameter('Occupancy')
+
+# Loop through rooms(Copy code)
+
+#for room in rooms:
+	
+#	room_parameter = room.Parameters
+#	room_parameter_map = room.ParametersMap
+#	room_area = room.Area
+#	room_occupancy = room.LookupParameter('Occupancy')
+#	new_occupancy = str(room_area/100)
+#	room_occupancy.Set(new_occupancy)
+#	print(room_occupancy.AsString())
+	
+#t.Commit()
+tempList = []
+for room in rooms:
+    room_parameter = room.Parameters
+    room_parameter_map = room.ParametersMap
+    room_area = room.Area
+    room_occupancy = room.LookupParameter('Occupancy')
+    new_occupancy = str(round(room_area/100))
+    
+    
+    if room_occupancy:
+        room.LookupParameter('Occupancy').Set(new_occupancy)
+        tempList.append(room.LookupParameter('Occupancy').AsString())
+        
+        
+
+# Commit the transaction
+#t.Commit()
+
+OUT = tempList
+TransactionManager.Instance.TransactionTaskDone()
